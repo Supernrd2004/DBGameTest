@@ -22,6 +22,10 @@ public class GameWorld extends ApplicationAdapter {
 	int width = 1920;
 	int height = 1080;
 
+	float objPosX = 0;
+	float objPosY = 0;
+	float objDirection = 5.0f;
+
 	private double timeStart;
 	private double timeEnd;
 	private java.lang.String fpsString;
@@ -62,10 +66,17 @@ public class GameWorld extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
-		batch.draw(img, 0, 0);
+		batch.draw(img,objPosX, objPosY);
 		batch.draw(img2, 400, 400);
 		font.draw(batch,"FPS: " + Integer.toString(framesPerSecondLabel),50, camera.viewportHeight - 50);
 		batch.end();
+
+		objPosX += objDirection;
+		if (objPosX + img.getWidth() > camera.viewportWidth){
+			objDirection = -objDirection;
+		} else if (objPosX < 0){
+			objDirection = -objDirection;
+		}
 	}
 
 	@Override
