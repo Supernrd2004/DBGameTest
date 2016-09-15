@@ -46,6 +46,7 @@ public class GameWorld extends ApplicationAdapter {
 	}
 
 	//test comment
+	//test another comment
 	@Override
 	public void dispose () {
 		batch.dispose();
