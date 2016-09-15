@@ -19,8 +19,8 @@ public class GameWorld extends ApplicationAdapter {
 	private boolean loggingEnabled = true;
 
 	private OrthographicCamera camera;
-	int width = 1280;
-	int height = 1024;
+	int width = 1920;
+	int height = 1080;
 
 	private double timeStart;
 	private double timeEnd;
@@ -64,12 +64,10 @@ public class GameWorld extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(img, 0, 0);
 		batch.draw(img2, 400, 400);
-		font.draw(batch,Integer.toString(framesPerSecondLabel),300.0f, 300.0f);
+		font.draw(batch,"FPS: " + Integer.toString(framesPerSecondLabel),50, camera.viewportHeight - 50);
 		batch.end();
 	}
 
-	//test comment
-	//test another comment
 	@Override
 	public void dispose () {
 		batch.dispose();
