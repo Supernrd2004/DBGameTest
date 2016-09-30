@@ -14,11 +14,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWorld extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture img;
 
-	World gameWorld;
-
-	GameObject testGameObject;
+	private GameController controller;
 
 	private OrthographicCamera camera;
 	private int screenWidth = 1920;
@@ -36,8 +33,9 @@ public class GameWorld extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		SetupCamera(screenWidth, screenHeight);
 		SetupFPSCounter();
-		InitGameWorld();
-		InitGameObjects();
+
+		controller = new GameController();
+
 	}
 
 	@Override
@@ -49,14 +47,7 @@ public class GameWorld extends ApplicationAdapter {
 
 		////// Game Physics Section ////////
 
-		gameWorld.step(deltaTime,6,2);
-
-		///////////////////////////////////
-
-		/////// Object Update Section //////
-
-		//For each game object
-		testGameObject.UpdateSpritePosition();
+		controller.GetWorld().step(deltaTime,6,2);
 		////////////////////////////////////
 
 
@@ -71,7 +62,10 @@ public class GameWorld extends ApplicationAdapter {
 		//////////////////////////////SPRITE BATCH START///////////////////////////////////////
 		batch.begin();
 
-		batch.draw(testGameObject.GetSprite().getTexture(), testGameObject.GetSprite().getX(), testGameObject.GetSprite().getY());
+		for (GameObject o : controller.GetGameObjects()){
+			o.UpdateSpritePosition();
+			batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX(), o.GetSprite().getY());
+		}
 
 		//Logging section
 		if (monitorFPS){
@@ -91,7 +85,6 @@ public class GameWorld extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
 	}
 
 	//Initialize components needed for FPS counter
@@ -120,17 +113,4 @@ public class GameWorld extends ApplicationAdapter {
 		camera.setToOrtho(false, width, height);
 	}
 
-
-	private void InitGameWorld(){
-
-		gameWorld = new World(new Vector2(0,-98f),true);
-
-	}
-
-	private void InitGameObjects(){
-
-		img = new Texture("badlogic.jpg");
-		Sprite testGameSprite = new Sprite(img);
-		testGameObject = new GameObject(gameWorld,testGameSprite,new Vector2(Gdx.graphics.getWidth() /2 ,Gdx.graphics.getHeight() /2));
-	}
 }

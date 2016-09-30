@@ -14,34 +14,15 @@ public class GameObject {
     private Body objectBody;
     private Fixture objectFixture;
 
-    public GameObject(World gameWorld, Sprite gameSprite, Vector2 startingPosition){
+    public GameObject(Sprite gameSprite, Vector2 startingPosition, Body gameBody){
 
         objectSprite = gameSprite;
-        SetupBodyDefinition(gameWorld, startingPosition, gameSprite);
+        objectBody = gameBody;
         InitSpritePosition(objectBody.getPosition(), gameSprite);
     }
 
     private void InitSpritePosition(Vector2 startingPosition, Sprite gameSprite){
         gameSprite.setPosition(startingPosition.x, startingPosition.y);
-    }
-
-    private void SetupBodyDefinition(World gameWorld, Vector2 startingPosition, Sprite gameSprite){
-
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(startingPosition.x, startingPosition.y);
-
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(gameSprite.getWidth() /2, gameSprite.getHeight() /2);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 1f;
-
-        objectBody = gameWorld.createBody(bodyDef);
-        objectFixture = objectBody.createFixture(fixtureDef);
-
-        shape.dispose();
     }
 
     public Vector2 GetPosition(){
