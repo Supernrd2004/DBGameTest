@@ -74,13 +74,13 @@ public class GameWorld extends ApplicationAdapter {
 		//////////////////////////////SPRITE BATCH START///////////////////////////////////////
 		batch.begin();
 
+		//debugMatrix = batch.getProjectionMatrix().cpy();
+		//debugRenderer.render(controller.GetWorld(),debugMatrix);
+
 		for (GameObject o : controller.GetGameObjects()){
 			o.UpdateSpritePosition();
-			batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX(), o.GetSprite().getY());
+			batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX() - o.GetSprite().getWidth()/2, o.GetSprite().getY() -o.GetSprite().getHeight()/2);
 		}
-
-		debugMatrix = batch.getProjectionMatrix().cpy();
-		debugRenderer.render(controller.GetWorld(),debugMatrix);
 
 		//Logging section
 		if (monitorFPS){
@@ -93,7 +93,6 @@ public class GameWorld extends ApplicationAdapter {
 		//////////////////////////////SHAPE RENDERER START///////////////////////////////////////
 
 		shapeRenderer.setAutoShapeType(true);
-
 
 		shapeRenderer.begin();
 		shapeRenderer.setColor(Color.GREEN);
