@@ -84,12 +84,14 @@ public class GameWorld extends ApplicationAdapter {
 		//////////////////////////////SHAPE RENDERER START///////////////////////////////////////
 
 		shapeRenderer.setAutoShapeType(true);
+
+
 		shapeRenderer.begin();
 		shapeRenderer.setColor(Color.GREEN);
+		shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
 
 		for (StaticGameObject s : controller.GetStaticGameObjects()){
-
-			shapeRenderer.rect(s.GetPosition().x,s.GetPosition().y,s.GetWidth(),s.GetHeight());
+			shapeRenderer.rect(s.GetPosition().x - s.GetWidth()/2,s.GetPosition().y + s.GetHeight() /2 ,s.GetWidth(),s.GetHeight());
 		}
 
 		shapeRenderer.end();
