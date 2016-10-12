@@ -8,10 +8,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWorld extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture img;
+
+	private GameController controller;
 
 	private OrthographicCamera camera;
 	private int screenWidth = 1920;
@@ -27,10 +31,11 @@ public class GameWorld extends ApplicationAdapter {
 	public void create () {
 
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-
 		SetupCamera(screenWidth, screenHeight);
 		SetupFPSCounter();
+
+		controller = new GameController();
+
 	}
 
 	@Override
@@ -39,6 +44,12 @@ public class GameWorld extends ApplicationAdapter {
 		//Add the previous render time to our total elapsed time
 		float deltaTime = Gdx.graphics.getDeltaTime();
 		timeElapsed = timeElapsed + deltaTime;
+
+		////// Game Physics Section ////////
+
+		controller.GetWorld().step(deltaTime,6,2);
+		////////////////////////////////////
+
 
 		//Clear the screen with the color black;
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -51,7 +62,10 @@ public class GameWorld extends ApplicationAdapter {
 		//////////////////////////////SPRITE BATCH START///////////////////////////////////////
 		batch.begin();
 
-		batch.draw(img, 0, 0);
+		for (GameObject o : controller.GetGameObjects()){
+			o.UpdateSpritePosition();
+			batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX(), o.GetSprite().getY());
+		}
 
 		//Logging section
 		if (monitorFPS){
@@ -71,7 +85,6 @@ public class GameWorld extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
 	}
 
 	//Initialize components needed for FPS counter
@@ -99,4 +112,5 @@ public class GameWorld extends ApplicationAdapter {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, width, height);
 	}
+
 }
