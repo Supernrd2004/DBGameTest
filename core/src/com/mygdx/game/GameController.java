@@ -80,6 +80,8 @@ public class GameController {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
+        //set value of 'bounce' 0 to 1
+        fixtureDef.restitution = 0.8f;
 
         newGameBody = gameWorld.createBody(bodyDef);
         newGameFixture = newGameBody.createFixture(fixtureDef);
