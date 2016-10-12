@@ -62,7 +62,6 @@ public class GameWorld extends ApplicationAdapter {
 		controller.GetWorld().step(deltaTime,6,2);
 		////////////////////////////////////
 
-
 		//Clear the screen with the color black;
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -79,7 +78,13 @@ public class GameWorld extends ApplicationAdapter {
 
 		for (GameObject o : controller.GetGameObjects()){
 			o.UpdateSpritePosition();
-			batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX() - o.GetSprite().getWidth()/2, o.GetSprite().getY() -o.GetSprite().getHeight()/2);
+			//batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX() - o.GetSprite().getWidth()/2, o.GetSprite().getY() -o.GetSprite().getHeight()/2);
+
+			batch.draw(o.GetSprite(), o.GetSprite().getX() - o.GetSprite().getWidth()/2 , o.GetSprite().getY() -o.GetSprite().getHeight()/2,o.GetSprite().getOriginX(),
+					o.GetSprite().getOriginY(),
+					o.GetSprite().getWidth(),o.GetSprite().getHeight(),o.GetSprite().getScaleX(),o.GetSprite().
+							getScaleY(),o.GetSprite().getRotation());
+
 		}
 
 		//Logging section

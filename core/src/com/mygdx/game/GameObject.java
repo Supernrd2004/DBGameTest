@@ -31,6 +31,7 @@ public class GameObject {
 
     public void UpdateSpritePosition(){
         objectSprite.setPosition(objectBody.getPosition().x, objectBody.getPosition().y);
+        objectSprite.setRotation((float)Math.toDegrees(objectBody.getAngle()));
     }
 
     public Sprite GetSprite(){
