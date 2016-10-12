@@ -79,9 +79,8 @@ public class GameWorld extends ApplicationAdapter {
 			batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX(), o.GetSprite().getY());
 		}
 
-		debugMatrix = batch.getProjectionMatrix().cpy();
-		debugRenderer.render(controller.GetWorld(),debugMatrix);
-
+		//debugMatrix = batch.getProjectionMatrix().cpy();
+		//debugRenderer.render(controller.GetWorld(),debugMatrix);
 
 		//Logging section
 		if (monitorFPS){
@@ -93,7 +92,7 @@ public class GameWorld extends ApplicationAdapter {
 
 		//////////////////////////////SHAPE RENDERER START///////////////////////////////////////
 
-		/*shapeRenderer.setAutoShapeType(true);
+		shapeRenderer.setAutoShapeType(true);
 
 
 		shapeRenderer.begin();
@@ -106,7 +105,7 @@ public class GameWorld extends ApplicationAdapter {
 
 		shapeRenderer.end();
 		//////////////////////////////SHAPE RENDERER BATCH END/////////////////////////////////////////
-			*/
+
 		//Update the FPS counter
 		if (monitorFPS){
 			UpdateFPSCounter();
