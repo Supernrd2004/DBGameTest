@@ -20,19 +20,28 @@ public class GameController {
     private World gameWorld;
     private HashMap<String, Sprite> gameSprites;
 
-    private float gravity = -98F;
+    private float gravity = -500F;
 
     private ArrayList<GameObject> gameObjects;
 
     public GameController (){
 
         this.gameWorld = new World(new Vector2(0,gravity),true);
+
         gameSprites = new HashMap<String, Sprite>();
         gameObjects = new ArrayList<GameObject>();
+
+        InitializeGameObjects();
     }
 
     public void InitializeGameObjects(){
-        CreateGameObject(new Vector2(Gdx.graphics.getWidth() /2 ,Gdx.graphics.getHeight() /2),"badlogic.jpg");
+
+        for(int i = 0; i < 20; i++){
+            float x = (float)Math.random() * 1000;
+            float y = (float)Math.random() * 1000;
+
+            CreateGameObject(new Vector2(x,y),"badlogic.jpg");
+        }
     }
 
     public ArrayList<GameObject> GetGameObjects(){

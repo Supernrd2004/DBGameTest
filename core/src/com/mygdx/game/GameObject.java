@@ -36,4 +36,8 @@ public class GameObject {
     public Sprite GetSprite(){
         return objectSprite;
     }
+
+    public Body GetBody(){
+        return objectBody;
+    }
 }
