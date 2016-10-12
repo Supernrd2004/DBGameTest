@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -16,6 +17,8 @@ public class GameWorld extends ApplicationAdapter {
 	SpriteBatch batch;
 
 	private GameController controller;
+
+	private ShapeRenderer shapeRenderer;
 
 	private OrthographicCamera camera;
 	private int screenWidth = 1920;
@@ -31,6 +34,9 @@ public class GameWorld extends ApplicationAdapter {
 	public void create () {
 
 		batch = new SpriteBatch();
+
+		shapeRenderer = new ShapeRenderer();
+
 		SetupCamera(screenWidth, screenHeight);
 		SetupFPSCounter();
 
@@ -74,6 +80,20 @@ public class GameWorld extends ApplicationAdapter {
 
 		batch.end();
 		//////////////////////////////SPRITE BATCH END/////////////////////////////////////////
+
+		//////////////////////////////SHAPE RENDERER START///////////////////////////////////////
+
+		shapeRenderer.setAutoShapeType(true);
+		shapeRenderer.begin();
+		shapeRenderer.setColor(Color.GREEN);
+
+		for (StaticGameObject s : controller.GetStaticGameObjects()){
+
+			shapeRenderer.rect(s.GetPosition().x,s.GetPosition().y,s.GetWidth(),s.GetHeight());
+		}
+
+		shapeRenderer.end();
+		//////////////////////////////SHAPE RENDERER BATCH END/////////////////////////////////////////
 
 		//Update the FPS counter
 		if (monitorFPS){

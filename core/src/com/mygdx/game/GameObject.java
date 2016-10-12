@@ -40,4 +40,8 @@ public class GameObject {
     public Body GetBody(){
         return objectBody;
     }
+
+    public boolean HasSprite(){
+        return true;
+    }
 }

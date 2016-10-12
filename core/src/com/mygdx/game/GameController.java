@@ -23,6 +23,7 @@ public class GameController {
     private float gravity = -500F;
 
     private ArrayList<GameObject> gameObjects;
+    private ArrayList<StaticGameObject> staticGameObjects;
 
     public GameController (){
 
@@ -30,11 +31,14 @@ public class GameController {
 
         gameSprites = new HashMap<String, Sprite>();
         gameObjects = new ArrayList<GameObject>();
+        staticGameObjects = new ArrayList<StaticGameObject>();
 
         InitializeGameObjects();
     }
 
     public void InitializeGameObjects(){
+
+        CreateStaticGameObject(new Vector2(Gdx.graphics.getWidth() /2,0),Gdx.graphics.getWidth(),50);
 
         for(int i = 0; i < 20; i++){
             float x = (float)Math.random() * 1000;
@@ -46,6 +50,10 @@ public class GameController {
 
     public ArrayList<GameObject> GetGameObjects(){
         return gameObjects;
+    }
+
+    public ArrayList<StaticGameObject> GetStaticGameObjects(){
+        return staticGameObjects;
     }
 
     public void CreateGameObject(Vector2 startingPosition, String spriteName){
@@ -79,6 +87,34 @@ public class GameController {
         newGameObject = new GameObject(gameSprite,startingPosition,newGameBody);
 
         gameObjects.add(newGameObject);
+
+        shape.dispose();
+
+    }
+
+    public void CreateStaticGameObject(Vector2 startingPosition, int width, int height){
+
+        StaticGameObject newGameObject;
+
+        Body staticGameBody;
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(startingPosition.x, startingPosition.y);
+
+        EdgeShape shape = new EdgeShape();
+        shape.set(-width/2,-height/2,width/2, height/2);
+
+        staticGameBody = gameWorld.createBody(bodyDef);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+
+        staticGameBody.createFixture(fixtureDef);
+
+        newGameObject = new StaticGameObject(startingPosition,staticGameBody,width,height);
+
+        staticGameObjects.add(newGameObject);
 
         shape.dispose();
 
