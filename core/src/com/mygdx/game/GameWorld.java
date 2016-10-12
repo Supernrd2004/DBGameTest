@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class GameWorld extends ApplicationAdapter {
@@ -19,6 +21,9 @@ public class GameWorld extends ApplicationAdapter {
 	private GameController controller;
 
 	private ShapeRenderer shapeRenderer;
+
+	private Box2DDebugRenderer debugRenderer;
+	private Matrix4 debugMatrix;
 
 	private OrthographicCamera camera;
 	private int screenWidth = 1920;
@@ -36,11 +41,12 @@ public class GameWorld extends ApplicationAdapter {
 		batch = new SpriteBatch();
 
 		shapeRenderer = new ShapeRenderer();
+		debugRenderer = new Box2DDebugRenderer();
 
 		SetupCamera(screenWidth, screenHeight);
 		SetupFPSCounter();
 
-		controller = new GameController();
+		controller = new GameController(screenWidth,screenHeight);
 
 	}
 
@@ -73,6 +79,10 @@ public class GameWorld extends ApplicationAdapter {
 			batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX(), o.GetSprite().getY());
 		}
 
+		debugMatrix = batch.getProjectionMatrix().cpy();
+		debugRenderer.render(controller.GetWorld(),debugMatrix);
+
+
 		//Logging section
 		if (monitorFPS){
 			font.draw(batch,fpsString,50, camera.viewportHeight - 50);
@@ -83,7 +93,7 @@ public class GameWorld extends ApplicationAdapter {
 
 		//////////////////////////////SHAPE RENDERER START///////////////////////////////////////
 
-		shapeRenderer.setAutoShapeType(true);
+		/*shapeRenderer.setAutoShapeType(true);
 
 
 		shapeRenderer.begin();
@@ -96,7 +106,7 @@ public class GameWorld extends ApplicationAdapter {
 
 		shapeRenderer.end();
 		//////////////////////////////SHAPE RENDERER BATCH END/////////////////////////////////////////
-
+			*/
 		//Update the FPS counter
 		if (monitorFPS){
 			UpdateFPSCounter();

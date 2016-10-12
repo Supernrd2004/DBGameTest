@@ -25,7 +25,7 @@ public class GameController {
     private ArrayList<GameObject> gameObjects;
     private ArrayList<StaticGameObject> staticGameObjects;
 
-    public GameController (){
+    public GameController (int width, int height){
 
         this.gameWorld = new World(new Vector2(0,gravity),true);
 
@@ -33,14 +33,14 @@ public class GameController {
         gameObjects = new ArrayList<GameObject>();
         staticGameObjects = new ArrayList<StaticGameObject>();
 
-        InitializeGameObjects();
+        InitializeGameObjects(width, height);
     }
 
-    public void InitializeGameObjects(){
+    public void InitializeGameObjects( int width, int height){
 
-        CreateStaticGameObject(new Vector2(Gdx.graphics.getWidth() /2,0),Gdx.graphics.getWidth(),50);
+        CreateStaticGameObject(new Vector2(width /2,0),width,50);
 
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i < 4; i++){
             float x = (float)Math.random() * 1000;
             float y = (float)Math.random() * 1000;
 
