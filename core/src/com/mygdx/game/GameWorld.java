@@ -79,8 +79,8 @@ public class GameWorld extends ApplicationAdapter {
 			batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX(), o.GetSprite().getY());
 		}
 
-		//debugMatrix = batch.getProjectionMatrix().cpy();
-		//debugRenderer.render(controller.GetWorld(),debugMatrix);
+		debugMatrix = batch.getProjectionMatrix().cpy();
+		debugRenderer.render(controller.GetWorld(),debugMatrix);
 
 		//Logging section
 		if (monitorFPS){
@@ -98,9 +98,10 @@ public class GameWorld extends ApplicationAdapter {
 		shapeRenderer.begin();
 		shapeRenderer.setColor(Color.GREEN);
 		shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+		shapeRenderer.setProjectionMatrix(camera.combined);
 
 		for (StaticGameObject s : controller.GetStaticGameObjects()){
-			shapeRenderer.rect(s.GetPosition().x - s.GetWidth()/2,s.GetPosition().y + s.GetHeight() /2 ,s.GetWidth(),s.GetHeight());
+			shapeRenderer.rect(s.GetPosition().x - s.GetWidth()/2,s.GetPosition().y - s.GetHeight() /2,s.GetWidth(),s.GetHeight());
 		}
 
 		shapeRenderer.end();
