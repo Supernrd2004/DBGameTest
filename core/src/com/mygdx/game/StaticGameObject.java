@@ -19,6 +19,8 @@ public class StaticGameObject {
     private Fixture objectFixture;
 
     public StaticGameObject(Vector2 startingPosition, Body gameBody, int width, int height){
+        this.width = width;
+        this.height = height;
         objectBody = gameBody;
     }
 
