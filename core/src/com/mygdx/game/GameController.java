@@ -38,7 +38,7 @@ public class GameController {
 
     public void InitializeGameObjects( int width, int height){
 
-        CreateStaticGameObject(new Vector2(width /2,0),width,50);
+        CreateStaticGameObject(new Vector2(width /2,100),width,50);
 
         for(int i = 0; i < 4; i++){
             float x = (float)Math.random() * 1000;
@@ -102,13 +102,13 @@ public class GameController {
         bodyDef.type = BodyDef.BodyType.StaticBody;
         bodyDef.position.set(startingPosition.x, startingPosition.y);
 
-        EdgeShape shape = new EdgeShape();
-        shape.set(-width/2,-height/2,width/2, height/2);
+        PolygonShape newShape = new PolygonShape();
+        newShape.setAsBox(width/2,height/2);
 
         staticGameBody = gameWorld.createBody(bodyDef);
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
+        fixtureDef.shape = newShape;
 
         staticGameBody.createFixture(fixtureDef);
 
@@ -116,7 +116,7 @@ public class GameController {
 
         staticGameObjects.add(newGameObject);
 
-        shape.dispose();
+        newShape.dispose();
 
     }
 
