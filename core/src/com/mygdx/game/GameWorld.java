@@ -22,18 +22,21 @@ public class GameWorld extends ApplicationAdapter {
 
 	private ShapeRenderer shapeRenderer;
 
+	//Debug objects
 	private Box2DDebugRenderer debugRenderer;
 	private Matrix4 debugMatrix;
 
 	private OrthographicCamera camera;
 	private int screenWidth = 1920;
 	private int screenHeight = 1080;
+	public static float PIXELS_TO_METERS = 100.0f;
 
 	private boolean monitorFPS =  true;
 	private String fpsString;
 	private double fpsCounter;
 	private double timeElapsed;
 	private BitmapFont font;
+
 
 	@Override
 	public void create () {
@@ -55,11 +58,14 @@ public class GameWorld extends ApplicationAdapter {
 
 		//Add the previous render time to our total elapsed time
 		float deltaTime = Gdx.graphics.getDeltaTime();
-		timeElapsed = timeElapsed + deltaTime;
+
+
+		timeElapsed = timeElapsed + deltaTime; //This is used to calculate frames per second
 
 		////// Game Physics Section ////////
 
-		controller.GetWorld().step(deltaTime,6,2);
+		controller.Step(deltaTime);
+
 		////////////////////////////////////
 
 		//Clear the screen with the color black;
@@ -78,18 +84,22 @@ public class GameWorld extends ApplicationAdapter {
 
 		for (GameObject o : controller.GetGameObjects()){
 			o.UpdateSpritePosition();
-			//batch.draw(o.GetSprite().getTexture(), o.GetSprite().getX() - o.GetSprite().getWidth()/2, o.GetSprite().getY() -o.GetSprite().getHeight()/2);
-
-			batch.draw(o.GetSprite(), o.GetSprite().getX() - o.GetSprite().getWidth()/2 , o.GetSprite().getY() -o.GetSprite().getHeight()/2,o.GetSprite().getOriginX(),
+			batch.draw(o.GetSprite(),
+					o.GetSprite().getX() - o.GetSprite().getWidth()/2,
+					o.GetSprite().getY() -o.GetSprite().getHeight()/2,
+					o.GetSprite().getOriginX(),
 					o.GetSprite().getOriginY(),
-					o.GetSprite().getWidth(),o.GetSprite().getHeight(),o.GetSprite().getScaleX(),o.GetSprite().
-							getScaleY(),o.GetSprite().getRotation());
-
+					o.GetSprite().getWidth(),
+					o.GetSprite().getHeight(),
+					o.GetSprite().getScaleX(),
+					o.GetSprite().getScaleY(),
+					o.GetSprite().getRotation());
 		}
 
 		//Logging section
 		if (monitorFPS){
 			font.draw(batch,fpsString,50, camera.viewportHeight - 50);
+			font.draw(batch,controller.GetTicksPerSecondString(),50, camera.viewportHeight - 100);
 		}
 
 		batch.end();
@@ -105,7 +115,9 @@ public class GameWorld extends ApplicationAdapter {
 		shapeRenderer.setProjectionMatrix(camera.combined);
 
 		for (StaticGameObject s : controller.GetStaticGameObjects()){
-			shapeRenderer.rect(s.GetPosition().x - s.GetWidth()/2,s.GetPosition().y - s.GetHeight() /2,s.GetWidth(),s.GetHeight());
+			shapeRenderer.rect(s.GetPosition().x * GameWorld.PIXELS_TO_METERS - s.GetWidth()/2 ,
+					s.GetPosition().y * GameWorld.PIXELS_TO_METERS - s.GetHeight() /2 ,
+					s.GetWidth(),s.GetHeight());
 		}
 
 		shapeRenderer.end();

@@ -30,7 +30,7 @@ public class GameObject {
     }
 
     public void UpdateSpritePosition(){
-        objectSprite.setPosition(objectBody.getPosition().x, objectBody.getPosition().y);
+        objectSprite.setPosition(objectBody.getPosition().x * GameWorld.PIXELS_TO_METERS, objectBody.getPosition().y * GameWorld.PIXELS_TO_METERS);
         objectSprite.setRotation((float)Math.toDegrees(objectBody.getAngle()));
     }
 
