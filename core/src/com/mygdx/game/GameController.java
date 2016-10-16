@@ -19,7 +19,7 @@ import java.util.HashMap;
 public class GameController {
 
     private World gameWorld;
-    private HashMap<String, Sprite> gameSprites;
+    private GameObjectFactory maker;
 
     private float gravity = -2.50F;
 
@@ -45,7 +45,8 @@ public class GameController {
 
         this.gameWorld = new World(new Vector2(0,gravity),true);
 
-        gameSprites = new HashMap<String, Sprite>();
+        this.maker = new GameObjectFactory(gameWorld);
+
         gameObjects = new ArrayList<GameObject>();
         staticGameObjects = new ArrayList<StaticGameObject>();
 
@@ -103,6 +104,20 @@ public class GameController {
         }
     }
 
+    public GameObject CreateGameObject(Vector2 startingPosition, String spriteName){
+
+        GameObject newObject = maker.CreateGameObject(startingPosition,spriteName);
+        this.GetGameObjects().add(newObject);
+        return newObject;
+    }
+
+    public StaticGameObject CreateStaticGameObject(Vector2 startingPosition, int width, int height){
+
+        StaticGameObject newObject = maker.CreateStaticGameObject(startingPosition,width,height);
+        this.GetStaticGameObjects().add(newObject);
+        return newObject;
+    }
+
     //Game logic goes here
     private void GameTick(float timeStep){
     }
@@ -115,87 +130,8 @@ public class GameController {
         return staticGameObjects;
     }
 
-    public GameObject CreateGameObject(Vector2 startingPosition, String spriteName){
-
-        GameObject newGameObject;
-        Sprite gameSprite;
-
-        if (!gameSprites.containsKey(spriteName)){
-           gameSprite = CreateSprite(spriteName);
-        }else{
-            gameSprite = gameSprites.get(spriteName);
-        }
-
-        Body newGameBody;
-        Fixture newGameFixture;
-
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(startingPosition.x / GameWorld.PIXELS_TO_METERS, startingPosition.y / GameWorld.PIXELS_TO_METERS);
-
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(gameSprite.getWidth() /2 / GameWorld.PIXELS_TO_METERS, gameSprite.getHeight() /2 / GameWorld.PIXELS_TO_METERS);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 1f;
-
-        newGameBody = gameWorld.createBody(bodyDef);
-        newGameFixture = newGameBody.createFixture(fixtureDef);
-
-        newGameObject = new GameObject(gameSprite,startingPosition,newGameBody);
-
-        gameObjects.add(newGameObject);
-
-        shape.dispose();
-
-        return newGameObject;
-
-    }
-
-    public void CreateStaticGameObject(Vector2 startingPosition, int width, int height){
-
-        StaticGameObject newGameObject;
-
-        Body staticGameBody;
-
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(startingPosition.x / GameWorld.PIXELS_TO_METERS, startingPosition.y / GameWorld.PIXELS_TO_METERS);
-
-        PolygonShape newShape = new PolygonShape();
-        newShape.setAsBox(width/2 / GameWorld.PIXELS_TO_METERS,height/2 / GameWorld.PIXELS_TO_METERS);
-
-        staticGameBody = gameWorld.createBody(bodyDef);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = newShape;
-
-        staticGameBody.createFixture(fixtureDef);
-
-        newGameObject = new StaticGameObject(startingPosition,staticGameBody,width,height);
-
-        staticGameObjects.add(newGameObject);
-
-        newShape.dispose();
-
-    }
-
     public World GetWorld(){
         return gameWorld;
-    }
-
-    public Sprite GetSprite(String spriteName){
-        return gameSprites.get(spriteName);
-    }
-
-    public Sprite CreateSprite(String textureName){
-
-        Texture newTexture = new Texture(textureName);
-        Sprite newSprite = new Sprite(newTexture);
-        gameSprites.put(textureName, newSprite);
-        return newSprite;
-
     }
 
     public String GetTicksPerSecondString(){

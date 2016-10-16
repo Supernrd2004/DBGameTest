@@ -14,11 +14,24 @@ public class GameObject {
     private Body objectBody;
     private Fixture objectFixture;
 
+    private float width;
+    private float height;
+
+    private boolean hasSprite;
+
     public GameObject(Sprite gameSprite, Vector2 startingPosition, Body gameBody){
 
         objectSprite = gameSprite;
         objectBody = gameBody;
+        this.hasSprite = true;
         InitSpritePosition(objectBody.getPosition(), gameSprite);
+
+    }
+
+    public GameObject( Vector2 startingPosition, Body gameBody, float width, float height){
+
+        objectBody = gameBody;
+        this.hasSprite = false;
     }
 
     private void InitSpritePosition(Vector2 startingPosition, Sprite gameSprite){
