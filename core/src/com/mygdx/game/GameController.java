@@ -5,8 +5,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -20,6 +22,8 @@ public class GameController {
 
     private World gameWorld;
     private GameObjectFactory maker;
+
+    private boolean debugMode = true;
 
     private float gravity = -2.50F;
 
@@ -35,11 +39,14 @@ public class GameController {
     private String tpsValueString = "";
 
     private ArrayList<GameObject> gameObjects;
-    private ArrayList<StaticGameObject> staticGameObjects;
 
     private boolean canControl = true;
+    private Vector3 touchInput;
+    private boolean isTouched = false;
 
+    //Game Objects
     private GameObject myGameObject;
+    private GameObject optionsButton;
 
     public GameController (int width, int height){
 
@@ -48,16 +55,23 @@ public class GameController {
         this.maker = new GameObjectFactory(gameWorld);
 
         gameObjects = new ArrayList<GameObject>();
-        staticGameObjects = new ArrayList<StaticGameObject>();
 
         InitializeGameObjects(width, height);
     }
 
     public void InitializeGameObjects( int width, int height){
-        CreateStaticGameObject(new Vector2(width /2,50),width,50);
-        CreateStaticGameObject(new Vector2(width -50,height / 2),50,height);
+        CreateStaticGameObject(new Vector2(width /2,50),width,50, false);
+        CreateStaticGameObject(new Vector2(width -50,height / 2),50,height, false);
 
-        myGameObject = CreateGameObject(new Vector2(100,300),"GameSprite.png");
+        myGameObject = CreateGameObject(new Vector2(100,300),"GameSprite.png",false);
+        optionsButton = CreateStaticGameObject(new Vector2(width - 200, height - 100),"Gear.png",true);
+
+    }
+
+    public void TouchInput(Vector3 touchInput){
+
+        this.touchInput = touchInput;
+        this.isTouched = true;
     }
 
     public void Step(float deltaTime){
@@ -96,25 +110,53 @@ public class GameController {
         }
     }
 
+    public boolean IsDebugMode(){
+        return this.debugMode;
+    }
+
     private void ProcessInput(){
-        if (Gdx.input.isTouched() && this.canControl){
-            myGameObject.GetBody().applyLinearImpulse(2F, 2F,myGameObject.GetBody().getPosition().x,myGameObject.GetBody().getPosition().y,true);
-            myGameObject.GetBody().applyAngularImpulse(-.07f,true);
-            canControl = false;
+
+        //touch input
+        if (this.isTouched){
+
+            this.isTouched = false;
+
+            Vector2 touchLocation = new Vector2(touchInput.x,touchInput.y);
+
+            for (GameObject o: this.GetGameObjects())
+            {
+                if (o.IsTouched(touchLocation)){
+
+                    if (o.ObjectIsEqual(optionsButton)){
+                        debugMode = !debugMode;
+                    }else if (o.ObjectIsEqual(myGameObject)){
+                        myGameObject.GetBody().applyLinearImpulse(2F, 2F,myGameObject.GetBody().getPosition().x,myGameObject.GetBody().getPosition().y,true);
+                        myGameObject.GetBody().applyAngularImpulse(-.07f,true);
+                        canControl = false;
+                    }
+                }
+            }
         }
     }
 
-    public GameObject CreateGameObject(Vector2 startingPosition, String spriteName){
+    public GameObject CreateGameObject(Vector2 startingPosition, String spriteName, boolean isSensor){
 
-        GameObject newObject = maker.CreateGameObject(startingPosition,spriteName);
+        GameObject newObject = maker.CreateGameObject(startingPosition,spriteName,isSensor);
         this.GetGameObjects().add(newObject);
         return newObject;
     }
 
-    public StaticGameObject CreateStaticGameObject(Vector2 startingPosition, int width, int height){
+    public GameObject CreateStaticGameObject(Vector2 startingPosition, String spriteName, boolean isSensor){
 
-        StaticGameObject newObject = maker.CreateStaticGameObject(startingPosition,width,height);
-        this.GetStaticGameObjects().add(newObject);
+        GameObject newObject = maker.CreateStaticGameObject(startingPosition,spriteName,isSensor);
+        this.GetGameObjects().add(newObject);
+        return newObject;
+    }
+
+    public GameObject CreateStaticGameObject(Vector2 startingPosition, int width, int height, boolean isSensor){
+
+        GameObject newObject = maker.CreateStaticGameObject(startingPosition,width,height,isSensor);
+        this.GetGameObjects().add(newObject);
         return newObject;
     }
 
@@ -126,16 +168,37 @@ public class GameController {
         return gameObjects;
     }
 
-    public ArrayList<StaticGameObject> GetStaticGameObjects(){
-        return staticGameObjects;
-    }
-
     public World GetWorld(){
         return gameWorld;
     }
 
     public String GetTicksPerSecondString(){
         return tpsString + tpsValueString;
+    }
+
+    private void InitializeCollisionListener(){
+
+        this.GetWorld().setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+
+            }
+        });
     }
 
 }

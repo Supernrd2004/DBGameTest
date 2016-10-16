@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,10 +13,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class GameWorld extends ApplicationAdapter {
+public class GameWorld extends ApplicationAdapter implements InputProcessor {
 	SpriteBatch batch;
 
 	private GameController controller;
@@ -27,6 +29,7 @@ public class GameWorld extends ApplicationAdapter {
 	private Matrix4 debugMatrix;
 
 	private OrthographicCamera camera;
+	private Vector3 touchInput;
 	private int screenWidth = 1920;
 	private int screenHeight = 1080;
 	public static float PIXELS_TO_METERS = 100.0f;
@@ -51,6 +54,9 @@ public class GameWorld extends ApplicationAdapter {
 
 		controller = new GameController(screenWidth,screenHeight);
 
+		touchInput = new Vector3(0,0,0);
+		Gdx.input.setInputProcessor(this);
+
 	}
 
 	@Override
@@ -58,7 +64,6 @@ public class GameWorld extends ApplicationAdapter {
 
 		//Add the previous render time to our total elapsed time
 		float deltaTime = Gdx.graphics.getDeltaTime();
-
 
 		timeElapsed = timeElapsed + deltaTime; //This is used to calculate frames per second
 
@@ -79,21 +84,26 @@ public class GameWorld extends ApplicationAdapter {
 		//////////////////////////////SPRITE BATCH START///////////////////////////////////////
 		batch.begin();
 
-		//debugMatrix = batch.getProjectionMatrix().cpy();
-		//debugRenderer.render(controller.GetWorld(),debugMatrix);
+		if (controller.IsDebugMode()){
+			debugMatrix = batch.getProjectionMatrix().cpy();
+			debugMatrix.scale(GameWorld.PIXELS_TO_METERS,GameWorld.PIXELS_TO_METERS,1.0f);
+			debugRenderer.render(controller.GetWorld(),debugMatrix);
+		}
 
 		for (GameObject o : controller.GetGameObjects()){
-			o.UpdateSpritePosition();
-			batch.draw(o.GetSprite(),
-					o.GetSprite().getX() - o.GetSprite().getWidth()/2,
-					o.GetSprite().getY() -o.GetSprite().getHeight()/2,
-					o.GetSprite().getOriginX(),
-					o.GetSprite().getOriginY(),
-					o.GetSprite().getWidth(),
-					o.GetSprite().getHeight(),
-					o.GetSprite().getScaleX(),
-					o.GetSprite().getScaleY(),
-					o.GetSprite().getRotation());
+			if (o.HasSprite()){
+				o.UpdateSpritePosition();
+				batch.draw(o.GetSprite(),
+						o.GetSprite().getX() - o.GetSprite().getWidth()/2,
+						o.GetSprite().getY() -o.GetSprite().getHeight()/2,
+						o.GetSprite().getOriginX(),
+						o.GetSprite().getOriginY(),
+						o.GetSprite().getWidth(),
+						o.GetSprite().getHeight(),
+						o.GetSprite().getScaleX(),
+						o.GetSprite().getScaleY(),
+						o.GetSprite().getRotation());
+			}
 		}
 
 		//Logging section
@@ -114,10 +124,12 @@ public class GameWorld extends ApplicationAdapter {
 		shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
 		shapeRenderer.setProjectionMatrix(camera.combined);
 
-		for (StaticGameObject s : controller.GetStaticGameObjects()){
-			shapeRenderer.rect(s.GetPosition().x * GameWorld.PIXELS_TO_METERS - s.GetWidth()/2 ,
-					s.GetPosition().y * GameWorld.PIXELS_TO_METERS - s.GetHeight() /2 ,
-					s.GetWidth(),s.GetHeight());
+		for (GameObject s : controller.GetGameObjects()){
+			if (!s.HasSprite()){
+				shapeRenderer.rect(s.GetPosition().x * GameWorld.PIXELS_TO_METERS - s.GetWidth()/2 ,
+						s.GetPosition().y * GameWorld.PIXELS_TO_METERS - s.GetHeight() /2 ,
+						s.GetWidth(),s.GetHeight());
+			}
 		}
 
 		shapeRenderer.end();
@@ -159,6 +171,41 @@ public class GameWorld extends ApplicationAdapter {
 	private void SetupCamera(int width, int height){
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, width, height);
+	}
+
+	public boolean keyDown (int keycode) {
+		return false;
+	}
+
+	public boolean keyUp (int keycode) {
+		return false;
+	}
+
+	public boolean keyTyped (char character) {
+		return false;
+	}
+
+	public boolean touchDown (int x, int y, int pointer, int button) {
+		touchInput.set(x,y,0);
+		touchInput = camera.unproject(touchInput);
+		controller.TouchInput(touchInput);
+		return false;
+	}
+
+	public boolean touchUp (int x, int y, int pointer, int button) {
+		return false;
+	}
+
+	public boolean touchDragged (int x, int y, int pointer) {
+		return false;
+	}
+
+	public boolean mouseMoved (int x, int y) {
+		return false;
+	}
+
+	public boolean scrolled (int amount) {
+		return false;
 	}
 
 }

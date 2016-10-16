@@ -1,8 +1,10 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.sun.javafx.geom.Point2D;
 
 
 /**
@@ -14,22 +16,32 @@ public class GameObject {
     private Body objectBody;
     private Fixture objectFixture;
 
+    private long gameObjectID;
+
     private float width;
     private float height;
 
     private boolean hasSprite;
 
-    public GameObject(Sprite gameSprite, Vector2 startingPosition, Body gameBody){
+    public GameObject(Sprite gameSprite, Vector2 startingPosition, Body gameBody, long ID){
 
+
+
+        this.gameObjectID = ID;
         objectSprite = gameSprite;
         objectBody = gameBody;
         this.hasSprite = true;
         InitSpritePosition(objectBody.getPosition(), gameSprite);
+        this.width = gameSprite.getWidth();
+        this.height = gameSprite.getHeight();
 
     }
 
-    public GameObject( Vector2 startingPosition, Body gameBody, float width, float height){
+    public GameObject(Body gameBody, float width, float height, long ID){
 
+        this.gameObjectID = ID;
+        this.width = width;
+        this.height = height;
         objectBody = gameBody;
         this.hasSprite = false;
     }
@@ -43,8 +55,18 @@ public class GameObject {
     }
 
     public void UpdateSpritePosition(){
-        objectSprite.setPosition(objectBody.getPosition().x * GameWorld.PIXELS_TO_METERS, objectBody.getPosition().y * GameWorld.PIXELS_TO_METERS);
-        objectSprite.setRotation((float)Math.toDegrees(objectBody.getAngle()));
+        if (this.hasSprite){
+            objectSprite.setPosition(objectBody.getPosition().x * GameWorld.PIXELS_TO_METERS, objectBody.getPosition().y * GameWorld.PIXELS_TO_METERS);
+            objectSprite.setRotation((float)Math.toDegrees(objectBody.getAngle()));
+        }
+    }
+
+    public float GetWidth(){
+        return this.width;
+    }
+
+    public float GetHeight(){
+        return this.height;
     }
 
     public Sprite GetSprite(){
@@ -56,6 +78,35 @@ public class GameObject {
     }
 
     public boolean HasSprite(){
-        return true;
+        return this.hasSprite;
+    }
+
+    public long GetGameObjectID(){
+        return this.gameObjectID;
+    }
+
+    public boolean ObjectIsEqual(GameObject other){
+        if (this.GetGameObjectID() == other.GetGameObjectID()){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean IsTouched(Vector2 touchLocation){
+        for (Fixture f:this.GetBody().getFixtureList())
+        {
+            if (f.testPoint(touchLocation.x / GameWorld.PIXELS_TO_METERS,touchLocation.y / GameWorld.PIXELS_TO_METERS)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void TouchAction(){
+
+    }
+
+    public void CollisionAction(){
+
     }
 }

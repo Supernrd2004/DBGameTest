@@ -22,19 +22,22 @@ public class GameObjectFactory {
 
     private World gameWorld;
 
+    private long nextObjectID;
+
     private HashMap<String, Sprite> gameSprites;
 
     public GameObjectFactory(World gameWorld){
 
         this.gameWorld = gameWorld;
-        this.gameSprites = gameSprites = new HashMap<String, Sprite>();
+        this.gameSprites = new HashMap<String, Sprite>();
+        this.nextObjectID = 1;
     }
 
     public HashMap<String,Sprite> GetSprites(){
         return this.gameSprites;
     }
 
-    public GameObject CreateGameObject(Vector2 startingPosition, String spriteName){
+    public GameObject CreateGameObject(Vector2 startingPosition, String spriteName, boolean isSensor){
 
         GameObject newGameObject;
         Sprite gameSprite;
@@ -58,11 +61,12 @@ public class GameObjectFactory {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
+        fixtureDef.isSensor = isSensor;
 
         newGameBody = gameWorld.createBody(bodyDef);
         newGameFixture = newGameBody.createFixture(fixtureDef);
 
-        newGameObject = new GameObject(gameSprite,startingPosition,newGameBody);
+        newGameObject = new GameObject(gameSprite,startingPosition,newGameBody,GetNextGameID());
 
         shape.dispose();
 
@@ -70,9 +74,9 @@ public class GameObjectFactory {
 
     }
 
-    public StaticGameObject CreateStaticGameObject(Vector2 startingPosition, int width, int height){
+    public GameObject CreateStaticGameObject(Vector2 startingPosition, int width, int height, boolean isSensor){
 
-        StaticGameObject newGameObject;
+        GameObject newGameObject;
 
         Body staticGameBody;
 
@@ -87,15 +91,62 @@ public class GameObjectFactory {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = newShape;
+        fixtureDef.isSensor = isSensor;
 
         staticGameBody.createFixture(fixtureDef);
 
-        newGameObject = new StaticGameObject(startingPosition,staticGameBody,width,height);
+        newGameObject = new GameObject(staticGameBody,width,height,GetNextGameID());
 
         newShape.dispose();
 
         return newGameObject;
 
+    }
+
+    public GameObject CreateStaticGameObject(Vector2 startingPosition, String spriteName, boolean isSensor){
+
+        GameObject newGameObject;
+        Sprite gameSprite;
+
+        if (!gameSprites.containsKey(spriteName)){
+            gameSprite = CreateSprite(spriteName);
+        }else{
+            gameSprite = gameSprites.get(spriteName);
+        }
+
+        Body staticGameBody;
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(startingPosition.x / GameWorld.PIXELS_TO_METERS, startingPosition.y / GameWorld.PIXELS_TO_METERS);
+
+        PolygonShape newShape = new PolygonShape();
+        newShape.setAsBox(gameSprite.getWidth()/2 / GameWorld.PIXELS_TO_METERS,gameSprite.getHeight()/2 / GameWorld.PIXELS_TO_METERS);
+
+        staticGameBody = gameWorld.createBody(bodyDef);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = newShape;
+        fixtureDef.isSensor = isSensor;
+
+        staticGameBody.createFixture(fixtureDef);
+
+        newGameObject = new GameObject(gameSprite,startingPosition,staticGameBody,GetNextGameID());
+
+        newShape.dispose();
+
+        return newGameObject;
+
+    }
+
+    public long GetNextGameID(){
+        long newID = nextObjectID;
+        nextObjectID = nextObjectID + 1;
+        return newID;
+    }
+
+    public long PeekNextGameID(){
+        return nextObjectID;
     }
 
     public Sprite CreateSprite(String textureName){
